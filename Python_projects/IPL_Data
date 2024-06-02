@@ -1,0 +1,83 @@
+import numpy as np
+import pandas as pd
+
+
+# Data for IPL 2018
+ipl18 = pd.DataFrame({
+    'Team': ['SRH', 'CSK', 'KKR', 'RR', 'MI', 'RCB', 'KXIP', 'DD'],
+    'Matches': [14, 14, 14, 14, 14, 14, 14, 14],
+    'Won': [9, 9, 8, 7, 6, 6, 6, 5],
+    'Lost': [5, 5, 6, 7, 8, 8, 8, 9],
+    'Tied': [0, 0, 0, 0, 0, 0, 0, 0],
+    'N/R': [0, 0, 0, 0, 0, 0, 0, 0],
+    'NRR': [0.284, 0.253, -0.070, -0.250, 0.317, 0.129, -0.502, -0.222],
+    'For': [2230, 2488, 2363, 2130, 2380, 2322, 2210, 2297],
+    'Against': [2193, 2433, 2425, 2141, 2282, 2383, 2259, 2304]
+}, index=range(1, 9))
+
+
+# Print the entire DataFrame to check the entries
+print("IPL 2018 Data:")
+print(ipl18)
+print("\nTeams with NRR greater than zero:")
+print(ipl18[ipl18["NRR"] > 0])
+
+
+# Teams which have 'For' score exceeding 'Against' score
+print("\nTeams with 'For' score greater than 'Against' score:")
+print(ipl18[ipl18["For"] > ipl18["Against"]])
+
+
+# Combining both the conditions
+print("\nTeams with NRR > 0 and 'For' score > 'Against' score:")
+print(ipl18[(ipl18["NRR"] > 0) & (ipl18["For"] > ipl18["Against"])])
+
+
+print('\n')
+
+
+# Data for IPL 2017
+ipl17 = pd.DataFrame({
+    'Team': ['MI', 'RPS', 'SRH', 'KKR', 'KXIP', 'DD', 'GL', 'RCB'],
+    'Matches': [14, 14, 14, 14, 14, 14, 14, 14],
+    'Won': [10, 9, 8, 8, 7, 6, 4, 3],
+    'Lost': [4, 5, 5, 6, 7, 8, 10, 10],
+    'Tied': [0, 0, 0, 0, 0, 0, 0, 0],
+    'N/R': [0, 0, 1, 0, 0, 0, 0, 1],
+    'NRR': [0.784, 0.176, 0.469, 0.641, 0.123, -0.512, -0.412, -1.299],
+    'For': [2407, 2180, 2221, 2329, 2207, 2219, 2406, 1845],
+    'Against': [2242, 2165, 2118, 2300, 2229, 2255, 2472, 2033]
+}, index=range(1, 9))
+
+
+# Print the entire DataFrame to check the entries
+print("IPL 2017 Data:")
+print(ipl17)
+
+
+print('\n')
+
+
+# Combining IPL 2017 and IPL 2018 tables using pd.concat()
+combined_ipl = pd.concat([ipl17, ipl18], ignore_index=True)
+print("Combined IPL 2017 and 2018 Data:")
+print(combined_ipl)
+
+
+print('\n')
+
+
+# Teams with total matches greater than 25
+total_matches = combined_ipl[["Team", "Won", "Lost"]].groupby(["Team"]).sum()
+total_matches.sort_values(by=["Won"], inplace=True, ascending=False)
+total_matches["Total"] = total_matches["Won"] + total_matches["Lost"]
+win_percentage = (total_matches["Won"] / total_matches["Total"]) * 100
+
+
+# Filtering teams with more than 25 total matches
+filtered_teams = total_matches[total_matches["Total"] > 25]
+filtered_win_percentage = (filtered_teams["Won"] / filtered_teams["Total"]) * 100
+
+
+print("Teams with total points greater than 25 and their win percentages:")
+print(filtered_win_percentage)
